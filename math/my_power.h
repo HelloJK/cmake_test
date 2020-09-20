@@ -1,7 +1,7 @@
 #ifndef _HEAER_MYSQRT_H_
 #define _HEAER_MYSQRT_H_
 
-double mysqrt(double input);
+double my_power(double input, int n);
 
 
 
