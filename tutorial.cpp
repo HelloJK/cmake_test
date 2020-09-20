@@ -1,11 +1,12 @@
 // A simple program that computes the square root of a number
 #include <stdio.h>
 #include <stdlib.h>
-#include <math.h>
 #include "TutorialConfig.h"
 
 #ifdef USE_MYMATH
-#include "mysqrt.h"
+#include "math/mysqrt.h"
+#else 
+#include <math.h>
 #endif
 
 int main (int argc, char *argv[]) {
