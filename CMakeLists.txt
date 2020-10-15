@@ -6,6 +6,10 @@ project(Tutorial)
 set (Tutorial_VERSION_MAJOR 1)
 set (Tutorial_VERSION_MINOR 0)
 
+# 检查系统是否支持 pow 函数
+include (${CMAKE_ROOT}/Modules/CheckFunctionExists.cmake)
+check_function_exists (pow HAVE_POW)
+
 # configure a header file to pass some of the CMake settings
 # to the source code
 configure_file (
@@ -19,14 +23,15 @@ include_directories("${PROJECT_BINARY_DIR}")
  
 
 # should we use our own math functions?
-option (USE_MYMATH 
-        "Use tutorial provided math implementation" OFF)
+#option (USE_MYMATH 
+#        "Use tutorial provided math implementation" OFF)
 
-if (USE_MYMATH)
+if (HAVE_POW)
+else()
   include_directories ("${PROJECT_SOURCE_DIR}/math")
   add_subdirectory (math)
   set (EXTRA_LIBS ${EXTRA_LIBS} MathFunctions)
-endif (USE_MYMATH)
+endif (HAVE_POW)
  
 
 
@@ -40,3 +45,32 @@ add_executable(Tutorial ${DIR_SRCS})
 target_link_libraries (Tutorial ${EXTRA_LIBS}) 
 
 
+
+# 指定安装路径
+install (TARGETS Tutorial DESTINATION bin)
+install (FILES "${PROJECT_BINARY_DIR}/TutorialConfig.h"
+         DESTINATION include)
+
+
+# 启用测试
+enable_testing()
+# 定义一个宏，用来简化测试工作
+macro (do_test arg1 arg2 result)
+  add_test (test_${arg1}_${arg2} Tutorial ${arg1} ${arg2})
+  set_tests_properties (test_${arg1}_${arg2}
+    PROPERTIES PASS_REGULAR_EXPRESSION ${result})
+endmacro (do_test)
+ 
+# 使用该宏进行一系列的数据测试
+do_test (5 2 "= 25")
+do_test (10 5 "= 100000")
+do_test (2 10 "= 1024")
+
+
+# 构建一个 CPack 安装包
+include (InstallRequiredSystemLibraries)
+set (CPACK_RESOURCE_FILE_LICENSE
+  "${CMAKE_CURRENT_SOURCE_DIR}/LICENSE")
+set (CPACK_PACKAGE_VERSION_MAJOR "${Tutorial_VERSION_MAJOR}")
+set (CPACK_PACKAGE_VERSION_MINOR "${Tutorial_VERSION_MINOR}")
+include (CPack)

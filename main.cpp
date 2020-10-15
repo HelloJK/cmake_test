@@ -3,10 +3,10 @@
 #include <stdlib.h>
 #include "TutorialConfig.h"
 
-#ifdef USE_MYMATH
-#include "math/my_power.h"
-#else 
+#ifdef HAVE_POW
 #include <math.h>
+#else 
+#include "math/MathFunctions.h"
 #endif
 
 int main (int argc, char *argv[]) {
@@ -22,12 +22,12 @@ int main (int argc, char *argv[]) {
   double inputValue = atof(argv[1]);
   int inputN = atoi(argv[2]);
 
-  #ifdef USE_MYMATH
-    double outputValue = my_power(inputValue, inputN);
-    // std::cout << "use my math" << std::endl;
-    fprintf(stdout, "use my math\n");
+  #ifdef HAVE_POW
+    double outputValue = pow(inputValue, inputN);
+    fprintf(stdout, "use sys math\n");
   #else
-    double outputValue = pow(inputValue, 2);
+    double outputValue = my_power(inputValue, inputN);
+    fprintf(stdout, "use my math\n");
   #endif
 
   fprintf(stdout,"%g ^ %d = %g\n",

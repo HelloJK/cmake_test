@@ -1,4 +1,4 @@
-#include "my_power.h"
+#include "MathFunctions.h"
 
 double my_power(double input, int n) {
   int i = 0; 
